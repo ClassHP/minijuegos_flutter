@@ -31,6 +31,16 @@ Compilar para Android:
 flutter build apk
 ```
 
+Cambiar package name:
+```
+flutter pub run change_app_package_name:main com.dominio.nombre
+```
+
+Actualizar iconos:
+```
+flutter pub run flutter_launcher_icons:main
+```
+
 ## Documentación Frutter
 
 A few resources to get you started if this is your first Flutter project:
