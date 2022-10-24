@@ -2,26 +2,36 @@ import 'dart:async';
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
-class ColorBoxPlayPage extends StatefulWidget {
-  const ColorBoxPlayPage({super.key});
+class ColorboxPlay extends StatefulWidget {
+  const ColorboxPlay({super.key});
 
   @override
-  State<ColorBoxPlayPage> createState() => _ColorBoxPlayPageState();
+  State<ColorboxPlay> createState() => _ColorboxPlayState();
 }
 
-class _ColorBoxPlayPageState extends State<ColorBoxPlayPage> {
+class _ColorboxPlayState extends State<ColorboxPlay> {
   int _score = 0;
   int _speed = 0;
   Color? _currentColor;
   int _countSelected = 0;
   Timer? _timer;
+  String _name = 'Anónimo';
   final List<ColorBox> _colorBoxs = [];
   final int _maxColumn = 4;
   final int _maxRow = 6;
   final int _speedStart = 1000;
-  final int _speedAdd = 30;
+  final int _speedAdd = 50;
   final int _speedMax = 100;
+
+  int _getSpeed() {
+    //var s = (_speedStart.toDouble() * 1.3 - 120 * log(75 * _score.toDouble() + 1)).toInt();
+    var s = (_speedStart.toDouble() * 1.2 - 100 * pow(5 * _score.toDouble(), 1/3)).toInt();
+    s = s < _speedMax ? _speedMax : s;
+    s = s > _speedStart ? _speedStart : s;
+    return s; 
+  }
 
   void _addColorBox() {
     setState(() {
@@ -65,7 +75,7 @@ class _ColorBoxPlayPageState extends State<ColorBoxPlayPage> {
   }
 
   void _start() {
-    _timer = Timer.periodic(Duration(milliseconds: _speed), (timer) {
+    _timer = Timer.periodic(Duration(milliseconds: _getSpeed()), (timer) {
       _addColorBox();
       if (_isEnd()) {
         _end();
@@ -78,19 +88,58 @@ class _ColorBoxPlayPageState extends State<ColorBoxPlayPage> {
     _timer = null;
   }
 
+  Future<void> _saveScore(String name, int score) async {
+    await FirebaseFirestore.instance.collection('colorbox-score').add({
+      'name': name.isEmpty ? 'Anónimo' : name/*.substring(1, 20)*/,
+      'date': DateTime.now(),
+      'score': score,
+    }).then((value) {
+      //debugDumpApp();
+    });
+  }
+
   void _end() {
     _stop();
     var score = _score;
+    if(score == 0) {
+      GoRouter.of(context).pop();
+      return;
+    }
     showDialog<String>(
       context: context,
       barrierDismissible: false,
       builder: (BuildContext context) => AlertDialog(
         title: const Text('¡Final de la partida!'),
-        content: Text('Tu puntuanión fue de: $score'),
+        content: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text('Tu puntuanión fue de: $score'),
+            const SizedBox(height: 16),
+            TextField(
+              decoration: const InputDecoration(
+                border: OutlineInputBorder(),
+                hintText: 'Ingresa tu nombre...',
+              ),
+              onChanged: (String text) => _name = text,
+              onSubmitted: (String value) {
+                _saveScore(value, score)
+                    .then((value) => Navigator.pop(context, 'OK'));
+              },
+            ),
+          ],
+        ),
         actions: <Widget>[
           TextButton(
-            onPressed: () => Navigator.pop(context, 'OK'),
+            onPressed: () {
+              _saveScore(_name, score)
+                  .then((value) => Navigator.pop(context, 'OK'));
+            },
             child: const Text('OK'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, 'CANCEL'),
+            child: const Text('Cancelar'),
           ),
         ],
       ),

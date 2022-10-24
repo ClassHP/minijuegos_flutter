@@ -4,16 +4,16 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import 'color_box_play.dart';
+import 'colorbox_play.dart';
 
-class ColorBoxMenuPage extends StatefulWidget {
-  const ColorBoxMenuPage({super.key});
+class ColorboxMenu extends StatefulWidget {
+  const ColorboxMenu({super.key});
 
   @override
-  State<ColorBoxMenuPage> createState() => _ColorBoxMenuPageState();
+  State<ColorboxMenu> createState() => _ColorboxMenuState();
 }
 
-class _ColorBoxMenuPageState extends State<ColorBoxMenuPage> {
+class _ColorboxMenuState extends State<ColorboxMenu> {
   Timer? _timer;
   final List<ColorBox> _colorBoxs = [];
   final int _maxColumn = 4;
@@ -108,18 +108,20 @@ class _ColorBoxMenuPageState extends State<ColorBoxMenuPage> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 FloatingActionButton.extended(
+                  heroTag: UniqueKey(),
                   icon: const Icon(Icons.play_arrow),
                   label: const Text('Comenzar'),
                   onPressed: () => _play(),
                   backgroundColor: Theme.of(context).colorScheme.primary,
                 ),
-                /*const SizedBox(height: 20),
+                const SizedBox(height: 20),
                 FloatingActionButton.extended(
+                  heroTag: UniqueKey(),
                   icon: const Icon(Icons.timeline),
                   label: const Text('Puntuaciones'),
                   backgroundColor: Theme.of(context).colorScheme.secondary,
-                  onPressed: () {},
-                ),*/
+                  onPressed: () => GoRouter.of(context).go('/colorbox/score'),
+                ),
               ],
             ),
           ),

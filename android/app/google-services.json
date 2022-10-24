@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "955205905081",
+    "project_id": "minijuegosf",
+    "storage_bucket": "minijuegosf.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:955205905081:android:583f2dcdb31c674a604968",
+        "android_client_info": {
+          "package_name": "com.classhp.minijuegosf"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "955205905081-6rfv0g07fgdk9plqcjdecmh3357b4etl.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCIA8wx3GfK7-Gp7c6Q_QaR4XAkqTYbjsM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "955205905081-6rfv0g07fgdk9plqcjdecmh3357b4etl.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

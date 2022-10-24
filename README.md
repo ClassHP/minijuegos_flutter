@@ -1,6 +1,6 @@
 # minijuegos_flutter
 
-Proyecto Flutter para desarrollo de juegos practicos para aprender a programar.
+Proyecto Flutter para desarrollo de juegos prácticos para aprender a programar.
 
 ## Probar en la WEB
 [https://minijuegosf.app.com]
@@ -29,6 +29,7 @@ Proyecto Flutter para desarrollo de juegos practicos para aprender a programar.
 Compilar para Android:
 ```
 flutter build apk
+flutter build appbundle
 ```
 
 Cambiar package name:
