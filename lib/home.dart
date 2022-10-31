@@ -20,6 +20,12 @@ class _HomeState extends State<Home> {
       assetName: 'images/colorbox.jpg',
       location: '/colorbox',
     ),
+    _MenuItem(
+      title: 'Otelo / Reversi',
+      descrip: 'Juego de tablero',
+      assetName: 'images/otelo.jpg',
+      location: '/otelo',
+    ),
   ];
 
   @override
