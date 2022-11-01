@@ -3,10 +3,10 @@
 Proyecto Flutter para desarrollo de juegos prácticos para aprender a programar.
 
 ## Probar en la WEB
-[https://minijuegosf.app.com]
+[https://minijuegosf.web.app]
 
 ## Instalar en Android
-[https://play.google.com/store/apps/developer?id=ClassHP]
+[https://play.google.com/store/apps/details?id=com.classhp.minijuegosf]
 
 ## Lista de juegos desarrollados
 
