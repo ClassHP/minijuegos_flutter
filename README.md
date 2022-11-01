@@ -3,22 +3,22 @@
 Proyecto Flutter para desarrollo de juegos prácticos para aprender a programar.
 
 ## Probar en la WEB
-[https://minijuegosf.app.com]
+[https://minijuegosf.web.app]
 
 ## Instalar en Android
-[https://play.google.com/store/apps/developer?id=ClassHP]
+[https://play.google.com/store/apps/details?id=com.classhp.minijuegosf]
 
 ## Lista de juegos desarrollados
 
 - Color Box
   - Juego de agilidad en el que debes seleccionar 3 cuadros del mismo color y no dejar que se llene toda la pantalla.
+- Reversi / Othello / Otelo / Yang
+  - "Es un juego entre dos personas, que comparten 64 fichas iguales, de caras distintas, que se van colocando por turnos en un tablero dividido en 64 escaques. Las caras de las fichas se distinguen por su color y cada jugador tiene asignado uno de esos colores, ganando quien tenga más fichas sobre el tablero al finalizar la partida. Se clasifica como juego de tablero, abstracto y territorial; al igual que el go y las amazonas." Wikipedia
 
 ## Ideas de juegos por desarrollar
 
 - Sokoban
   - "El objetivo del juego es empujar las cajas (o las bolas) hasta su lugar correcto dentro de un reducido almacén, con el número mínimo de empujes y de pasos. Las cajas se pueden empujar solamente, y no tirar de ellas, y sólo se puede empujar una caja a la vez." Wikipedia
-- Reversi / Othello / Otelo / Yang
-  - "Es un juego entre dos personas, que comparten 64 fichas iguales, de caras distintas, que se van colocando por turnos en un tablero dividido en 64 escaques. Las caras de las fichas se distinguen por su color y cada jugador tiene asignado uno de esos colores, ganando quien tenga más fichas sobre el tablero al finalizar la partida. Se clasifica como juego de tablero, abstracto y territorial; al igual que el go y las amazonas." Wikipedia
 - Buscaminas / Minesweeper
   - El objetivo del juego es despejar un campo de minas sin detonar ninguna.
 - Sudoku

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:minijuegos_flutter/otelo/otelo.dart';
 import 'colorbox/colorbox_score.dart';
 import 'colorbox/colorbox_menu.dart';
 import 'colorbox/colorbox_play.dart';
@@ -36,6 +37,7 @@ class MainRouter {
               ),
             ],
           ),
+          GoRoute(path: 'otelo', builder: (context, state) => const Otelo())
         ],
       ),
     ],
