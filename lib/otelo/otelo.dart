@@ -1,5 +1,7 @@
 import 'dart:math';
+import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:minijuegos_flutter/loading.dart';
 import 'package:minijuegos_flutter/otelo/otelo_logic.dart';
 
 class Otelo extends StatefulWidget {
@@ -13,12 +15,17 @@ class _OteloState extends State<Otelo> {
   final List<Color> _playerColors = [Colors.black, Colors.white];
   final OteloLogic _logic = OteloLogic();
 
-  _OteloState();
+  _OteloState() {
+    _logic.updateLayout.listen((_) {
+      setState(() {});
+    });
+  }
 
   void _play(PlayerType type) {
-    setState(() {
-      _logic.init(type, 0);
+    _logic.init(type, 0).then((_) {
+      setState(() {});
     });
+    setState(() {});
   }
 
   void _stop() {
@@ -28,7 +35,7 @@ class _OteloState extends State<Otelo> {
   }
 
   void _setChip(Box box) {
-    _logic.setChip(box).then((value) {
+    _logic.setChip(box).then((_) {
       setState(() {});
     });
     setState(() {});
@@ -54,10 +61,10 @@ class _OteloState extends State<Otelo> {
             icon2: Icons.person,
             onPressed: () => _play(PlayerType.person),
           ),
-          const _ButtonPlay(
+          _ButtonPlay(
             icon1: Icons.person,
             icon2: Icons.public_sharp,
-            onPressed: null,
+            onPressed: () => _play(PlayerType.online),
           ),
         ],
       ),
@@ -87,8 +94,12 @@ class _OteloState extends State<Otelo> {
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             _Score(logic: _logic, playerColors: _playerColors),
-            _Board(
-                logic: _logic, playerColors: _playerColors, setChip: _setChip),
+            Expanded(
+              child: _Board(
+                  logic: _logic,
+                  playerColors: _playerColors,
+                  setChip: _setChip),
+            ),
             const SizedBox(height: 20),
             playButtons,
             endButton,
@@ -115,65 +126,60 @@ class _Board extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-      child: AspectRatio(
-        aspectRatio: 1,
-        child: GridView.count(
-          crossAxisCount: 8,
-          mainAxisSpacing: 2,
-          crossAxisSpacing: 2,
-          childAspectRatio: 1,
-          children: _logic.boxes.map<Widget>((box) {
-            var visible = box.player != null &&
-                    _logic.players[box.player ?? 0].type == PlayerType.person ||
-                box.selected;
-            return InkWell(
-              onTap: () {
-                if (box.player != null &&
-                    _logic.players[box.player ?? 0].type == PlayerType.person) {
-                  setChip(box);
-                }
-              },
-              child: Stack(alignment: AlignmentDirectional.center, children: [
-                Ink(
-                  decoration: const BoxDecoration(
-                    color: Colors.grey,
-                    borderRadius: BorderRadius.all(Radius.circular(2)),
-                  ),
-                ),
-                AnimatedFractionallySizedBox(
-                  alignment: Alignment.center,
-                  duration: visible
-                      ? const Duration(seconds: 1)
-                      : const Duration(milliseconds: 100),
-                  widthFactor: box.selected ? 0.9 : 0.5,
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: box.selected
-                          ? _playerColors[box.player ?? 0]
-                          : _playerColors[box.player ?? 0]
-                              .withOpacity(visible ? 0.5 : 0),
-                      shape: BoxShape.circle,
+    return AspectRatio(
+      aspectRatio: 1,
+      child: Stack(
+        children: [
+          GridView.count(
+            crossAxisCount: 8,
+            mainAxisSpacing: 2,
+            crossAxisSpacing: 2,
+            childAspectRatio: 1,
+            children: _logic.boxes.map<Widget>((box) {
+              var visible = box.player != null &&
+                      _logic.players[box.player ?? 0].type ==
+                          PlayerType.person ||
+                  box.selected;
+              return InkWell(
+                onTap: () {
+                  if (box.player != null &&
+                      _logic.players[box.player ?? 0].type ==
+                          PlayerType.person) {
+                    setChip(box);
+                  }
+                },
+                child: Stack(alignment: AlignmentDirectional.center, children: [
+                  Ink(
+                    decoration: const BoxDecoration(
+                      color: Colors.grey,
+                      borderRadius: BorderRadius.all(Radius.circular(2)),
                     ),
                   ),
-                ),
-                /*AnimatedContainer(
-                  width: visible ? double.maxFinite : 0,
-                  duration: visible
-                      ? const Duration(seconds: 1)
-                      : const Duration(milliseconds: 100),
-                  margin: EdgeInsets.all(box.selected ? 5 : 16),
-                  decoration: BoxDecoration(
-                    color: box.selected
-                        ? _playerColors[box.player ?? 0]
-                        : _playerColors[box.player ?? 0].withOpacity(0.5),
-                    shape: BoxShape.circle,
+                  AnimatedFractionallySizedBox(
+                    alignment: Alignment.center,
+                    duration: visible
+                        ? const Duration(seconds: 1)
+                        : const Duration(milliseconds: 100),
+                    widthFactor: box.selected ? 0.9 : 0.5,
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: box.selected
+                            ? _playerColors[box.player ?? 0]
+                            : _playerColors[box.player ?? 0]
+                                .withOpacity(visible ? 0.5 : 0),
+                        shape: BoxShape.circle,
+                      ),
+                    ),
                   ),
-                ),*/
-              ]),
-            );
-          }).toList(),
-        ),
+                ]),
+              );
+            }).toList(),
+          ),
+          AspectRatio(
+            aspectRatio: 1,
+            child: Loading(visible: _logic.loading),
+          ),
+        ],
       ),
     );
   }

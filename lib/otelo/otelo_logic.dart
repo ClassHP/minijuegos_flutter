@@ -1,4 +1,6 @@
+import 'dart:async';
 import 'dart:math';
+import 'package:minijuegos_flutter/otelo/otelo_store.dart';
 
 class OteloLogic {
   final List<Box> _boxes = [];
@@ -6,7 +8,13 @@ class OteloLogic {
   final List<Player> _players = [Player(player: 0), Player(player: 1)];
   late Player _turn;
   bool _end = true;
+  final OteloStore _store = OteloStore();
+  Stream<OteloRoom?>? _room;
+  final StreamController<void> _updateLayout = StreamController<void>.broadcast();
+  bool _loading = false;
 
+  bool get loading => _loading;
+  Stream<void> get updateLayout => _updateLayout.stream;
   List<Box> get boxes => _boxes;
   bool get end => _end;
   List<Player> get players => _players;
@@ -17,9 +25,10 @@ class OteloLogic {
     }
   }
 
-  void init(PlayerType type, int turn) {
+  Future<void> init(PlayerType type, int turn) async {
     _end = false;
     _turn = _players[turn];
+    _players[0].type = PlayerType.person;
     _players[1].type = type;
     _players[0].score = _type == _GameType.otelo ? 2 : 0;
     _players[1].score = _type == _GameType.otelo ? 2 : 0;
@@ -33,7 +42,43 @@ class OteloLogic {
         box.selected = true;
       }
     }
-    _setTurn(turn);
+    if(type != PlayerType.online) {
+      _setTurn(turn);
+    } else {
+      _loading = true;
+      _room = await _store.joinRoom(_boxes);
+      if(_room == null) {
+        stop();
+      } else {
+        _room?.listen((room) { 
+          if(room == null) {
+            stop();
+          } else {
+            _loading = room.status == 0;
+            _players[0].score = 0;
+            _players[1].score = 0;
+            _players[0].type = room.player1 == _store.playerId ? PlayerType.person : PlayerType.online;
+            _players[1].type = room.player2 == _store.playerId ? PlayerType.person : PlayerType.online;
+            for(int i = 0; i < _boxes.length; i++) {
+              if(room.boxes[i] == -1) {
+                _boxes[i].selected = false;
+                _boxes[i].player = null;
+              } else {
+                _boxes[i].selected = true;
+                _boxes[i].player = room.boxes[i];
+                _players[room.boxes[i]].score ++;
+              }
+            }
+            if(room.status == 2) {
+              stop();
+            } else {
+              _setTurn(room.turn);
+            }
+          }
+          _updateLayout.add(null);
+        });
+      }
+    }
   }
 
   Future<void> setChip(Box box) async {
@@ -49,14 +94,20 @@ class OteloLogic {
       if (!_setTurn(_turn == _players[0] ? 1 : 0)) {
         _end = !_setTurn(_turn == _players[0] ? 1 : 0);
       }
-      await Future.delayed(const Duration(milliseconds: 500), () async {
-        await _playIa();
-      });
+      await _playIa();
+      await _playOnline();
     }
   }
 
   void stop() {
     _end = true;
+    _loading = false;
+    if(_room != null) {
+      _room = null;
+      _store.endRoom().then((_) => {
+          _updateLayout.add(null)       
+      });
+    }
   }
 
   int _x(int index) {
@@ -146,7 +197,7 @@ class OteloLogic {
   }
 
   Future<void> _playIa() async {
-    while (_turn.type == PlayerType.ia) {
+    if (_turn.type == PlayerType.ia) {
       var boxes =
           _boxes.where((box) => !box.selected && box.player != null).toList();
       boxes.sort((a, b) => _getPriority(b) - _getPriority(a));
@@ -166,7 +217,15 @@ class OteloLogic {
             .toList();
       }
       var box = boxes[Random().nextInt(boxes.length)];
-      await setChip(box);
+      await Future.delayed(const Duration(milliseconds: 500));
+      setChip(box);
+      _updateLayout.add(null);
+    }
+  }
+
+  Future<void> _playOnline() async {
+    if (_turn.type == PlayerType.online || _end) {
+      await _store.updateRoom(_boxes, _end, _turn.player);
     }
   }
 }
@@ -191,3 +250,6 @@ class Player {
 
   Player({required this.player});
 }
+
+
+
