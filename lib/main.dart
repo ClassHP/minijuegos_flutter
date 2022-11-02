@@ -26,6 +26,8 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   ThemeMode _themeMode = ThemeMode.system;
 
+  ThemeMode get themeMode => _themeMode;
+
   ThemeData _theme(Brightness brightness) {
     const MaterialColor primary = Colors.purple;
     const MaterialColor secondary = Colors.blue;
@@ -66,5 +68,9 @@ class _MyAppState extends State<MyApp> {
     setState(() {
       _themeMode = _darkModeOn() ? ThemeMode.light : ThemeMode.dark;
     });
+  }
+
+  void setTheme(ThemeMode mode) {
+    _themeMode = mode;
   }
 }

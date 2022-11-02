@@ -30,13 +30,21 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
+    if (MyApp.of(context).themeMode == ThemeMode.system) {
+      MyApp.of(context).setTheme(
+          MediaQuery.of(context).platformBrightness == Brightness.dark
+              ? ThemeMode.dark
+              : ThemeMode.light);
+    }
+    var crossAxisCount = MediaQuery.of(context).orientation == Orientation.landscape ? 4 : 2;
+
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
       ),
       body: GridView.count(
         restorationId: 'grid_view_demo_grid_offset',
-        crossAxisCount: 2,
+        crossAxisCount: crossAxisCount,
         mainAxisSpacing: 8,
         crossAxisSpacing: 8,
         padding: const EdgeInsets.all(8),
