@@ -27,10 +27,12 @@ class _ColorboxPlayState extends State<ColorboxPlay> {
 
   int _getSpeed() {
     //var s = (_speedStart.toDouble() * 1.3 - 120 * log(75 * _score.toDouble() + 1)).toInt();
-    var s = (_speedStart.toDouble() * 1.2 - 100 * pow(5 * _score.toDouble(), 1/3)).toInt();
+    var s =
+        (_speedStart.toDouble() * 1.2 - 100 * pow(5 * _score.toDouble(), 1 / 3))
+            .toInt();
     s = s < _speedMax ? _speedMax : s;
     s = s > _speedStart ? _speedStart : s;
-    return s; 
+    return s;
   }
 
   void _addColorBox() {
@@ -90,7 +92,7 @@ class _ColorboxPlayState extends State<ColorboxPlay> {
 
   Future<void> _saveScore(String name, int score) async {
     await FirebaseFirestore.instance.collection('colorbox-score').add({
-      'name': name.isEmpty ? 'Anónimo' : name/*.substring(1, 20)*/,
+      'name': name.isEmpty ? 'Anónimo' : name /*.substring(1, 20)*/,
       'date': DateTime.now(),
       'score': score,
     }).then((value) {
@@ -101,7 +103,7 @@ class _ColorboxPlayState extends State<ColorboxPlay> {
   void _end() {
     _stop();
     var score = _score;
-    if(score == 0) {
+    if (score == 0) {
       GoRouter.of(context).pop();
       return;
     }
@@ -117,29 +119,32 @@ class _ColorboxPlayState extends State<ColorboxPlay> {
             Text('Tu puntuanión fue de: $score'),
             const SizedBox(height: 16),
             TextField(
+              maxLength: 20,
               decoration: const InputDecoration(
                 border: OutlineInputBorder(),
                 hintText: 'Ingresa tu nombre...',
               ),
               onChanged: (String text) => _name = text,
               onSubmitted: (String value) {
-                _saveScore(value, score)
-                    .then((value) => Navigator.pop(context, 'OK'));
+                _saveScore(value, score);
+                Navigator.pop(context, 'OK');
               },
             ),
           ],
         ),
         actions: <Widget>[
-          TextButton(
-            onPressed: () {
-              _saveScore(_name, score)
-                  .then((value) => Navigator.pop(context, 'OK'));
-            },
-            child: const Text('OK'),
-          ),
-          TextButton(
+          ElevatedButton(
             onPressed: () => Navigator.pop(context, 'CANCEL'),
             child: const Text('Cancelar'),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+                backgroundColor: Theme.of(context).colorScheme.secondary),
+            onPressed: () {
+              _saveScore(_name, score);
+              Navigator.pop(context, 'OK');
+            },
+            child: const Text('OK'),
           ),
         ],
       ),

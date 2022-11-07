@@ -1,5 +1,3 @@
-import 'dart:math';
-import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:minijuegos_flutter/loading.dart';
 import 'package:minijuegos_flutter/otelo/otelo_logic.dart';

@@ -26,6 +26,12 @@ class _HomeState extends State<Home> {
       assetName: 'images/otelo.jpg',
       location: '/otelo',
     ),
+    _MenuItem(
+      title: '2048',
+      descrip: 'Juego numérico',
+      assetName: 'images/2048.jpg',
+      location: '/2048',
+    ),
   ];
 
   @override

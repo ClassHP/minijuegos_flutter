@@ -232,7 +232,7 @@ class OteloLogic {
 
 enum PlayerType { person, ia, online }
 
-enum _GameType { otelo, reversi }
+enum _GameType { otelo }
 
 class Box {
   int? player;

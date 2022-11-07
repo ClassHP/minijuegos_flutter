@@ -14,6 +14,8 @@ Proyecto Flutter para desarrollo de juegos prácticos para aprender a programar.
   - Juego de agilidad en el que debes seleccionar 3 cuadros del mismo color y no dejar que se llene toda la pantalla.
 - Reversi / Othello / Otelo / Yang
   - "Es un juego entre dos personas, que comparten 64 fichas iguales, de caras distintas, que se van colocando por turnos en un tablero dividido en 64 escaques. Las caras de las fichas se distinguen por su color y cada jugador tiene asignado uno de esos colores, ganando quien tenga más fichas sobre el tablero al finalizar la partida. Se clasifica como juego de tablero, abstracto y territorial; al igual que el go y las amazonas." Wikipedia
+- 2048 (juego)
+  - Juego numérico cuyo objetivo es deslizar baldosas en una cuadrícula para combinarlas y crear una baldosa con el número 2048
 
 ## Ideas de juegos por desarrollar
 
