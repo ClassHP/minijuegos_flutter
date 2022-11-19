@@ -4,6 +4,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:minijuegos_flutter/g2048/g2048_logic.dart';
 import 'package:minijuegos_flutter/g2048/g2048_score.dart';
+import 'package:minijuegos_flutter/widgets/fitted_text.dart';
 
 class G2048 extends StatefulWidget {
   const G2048({Key? key}) : super(key: key);
@@ -240,33 +241,12 @@ class _Board extends StatelessWidget {
                 borderRadius: const BorderRadius.all(Radius.circular(2)),
               ),
               child: cell.value != 0
-                  ? FittedText(text: cell.value.toString())
+                  ? FittedText(cell.value.toString())
                   : null,
             ),
           ),
         );
       }).toList(),
-    );
-  }
-}
-
-class FittedText extends StatelessWidget {
-  final String _text;
-
-  const FittedText({
-    Key? key,
-    required String text,
-  })  : _text = text,
-        super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return FittedBox(
-      fit: BoxFit.contain,
-      child: Text(
-        _text,
-        style: const TextStyle(fontSize: 500),
-      ),
     );
   }
 }

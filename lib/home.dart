@@ -32,6 +32,12 @@ class _HomeState extends State<Home> {
       assetName: 'images/2048.jpg',
       location: '/2048',
     ),
+    _MenuItem(
+      title: 'Buscaminas',
+      descrip: 'Juego de lógica',
+      assetName: 'images/buscaminas.jpg',
+      location: '/buscaminas',
+    ),
   ];
 
   @override

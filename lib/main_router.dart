@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:minijuegos_flutter/buscaminas/buscaminas.dart';
 import 'package:minijuegos_flutter/g2048/g2048.dart';
 import 'package:minijuegos_flutter/otelo/otelo.dart';
 import 'colorbox/colorbox_score.dart';
@@ -40,6 +41,7 @@ class MainRouter {
           ),
           GoRoute(path: 'otelo', builder: (context, state) => const Otelo()),
           GoRoute(path: '2048', builder: (context, state) => const G2048()),
+          GoRoute(path: 'buscaminas', builder: (context, state) => const Buscaminas()),
         ],
       ),
     ],
