@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:minijuegos_flutter/loading.dart';
 import 'package:minijuegos_flutter/otelo/otelo_logic.dart';
+import 'package:minijuegos_flutter/widgets/download_android_bar.dart';
 
 class Otelo extends StatefulWidget {
   const Otelo({Key? key}) : super(key: key);
@@ -104,6 +105,7 @@ class _OteloState extends State<Otelo> {
           ],
         ),
       ),
+      bottomNavigationBar: const DownloadAndroidBar(),
     );
   }
 }

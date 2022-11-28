@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:minijuegos_flutter/buscaminas/buscaminas_logic.dart';
 import 'package:minijuegos_flutter/buscaminas/buscaminas_service.dart';
+import 'package:minijuegos_flutter/widgets/download_android_bar.dart';
 import 'package:minijuegos_flutter/widgets/fitted_text.dart';
 import 'package:minijuegos_flutter/widgets/info_box.dart';
 
@@ -149,6 +150,7 @@ class _BuscaminasState extends State<Buscaminas> {
           ],
         ),
       ),
+      bottomNavigationBar: const DownloadAndroidBar(),
     );
   }
 }

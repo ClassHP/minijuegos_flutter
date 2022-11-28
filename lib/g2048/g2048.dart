@@ -4,6 +4,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:minijuegos_flutter/g2048/g2048_logic.dart';
 import 'package:minijuegos_flutter/g2048/g2048_score.dart';
+import 'package:minijuegos_flutter/widgets/download_android_bar.dart';
 import 'package:minijuegos_flutter/widgets/fitted_text.dart';
 
 class G2048 extends StatefulWidget {
@@ -132,26 +133,6 @@ class _G2048State extends State<G2048> {
                     ],
                   ),
                 ),
-                /*const SizedBox(width: 20),
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: _logic.isEnd
-                        ? Theme.of(context).colorScheme.primary
-                        : Theme.of(context).colorScheme.error,
-                    padding: const EdgeInsets.all(14),
-                  ),
-                  onPressed: _init,
-                  child: Icon(_logic.isEnd ? Icons.play_arrow : Icons.refresh),
-                ),
-                const SizedBox(width: 20),
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Theme.of(context).colorScheme.secondary,
-                    padding: const EdgeInsets.all(14),
-                  ),
-                  onPressed: _showScore,
-                  child: const Icon(Icons.timeline),
-                )*/
               ],
             ),
             const SizedBox(height: 20),
@@ -169,6 +150,7 @@ class _G2048State extends State<G2048> {
           ],
         ),
       ),
+      bottomNavigationBar: const DownloadAndroidBar(),
     );
   }
 }

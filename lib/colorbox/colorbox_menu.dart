@@ -3,6 +3,7 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:minijuegos_flutter/widgets/download_android_bar.dart';
 
 import 'colorbox_play.dart';
 
@@ -127,6 +128,7 @@ class _ColorboxMenuState extends State<ColorboxMenu> {
           ),
         ],
       ),
+      bottomNavigationBar: const DownloadAndroidBar(),
     );
   }
 }

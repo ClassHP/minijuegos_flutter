@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-
+import 'package:share_plus/share_plus.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'main.dart';
 
 class Home extends StatefulWidget {
@@ -38,7 +40,26 @@ class _HomeState extends State<Home> {
       assetName: 'images/buscaminas.jpg',
       location: '/buscaminas',
     ),
+    _MenuItem(
+      title: 'Wordle (es)',
+      descrip: 'Juego de palabras',
+      assetName: 'images/wordle.jpg',
+      location: '/wordle',
+    ),
   ];
+
+  _openClassHP() {
+    launchUrl(Uri.parse('https://twitter.com/classhp'));
+  }
+
+  _openAndroid() {
+    launchUrl(Uri.parse(
+        'https://play.google.com/store/apps/details?id=com.classhp.minijuegosf'));
+  }
+
+  _share() {
+    Share.share('¡Mira estos minijuegos! https://minijuegosf.web.app');
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -48,7 +69,8 @@ class _HomeState extends State<Home> {
               ? ThemeMode.dark
               : ThemeMode.light);
     }
-    var crossAxisCount = MediaQuery.of(context).orientation == Orientation.landscape ? 4 : 2;
+    var crossAxisCount =
+        MediaQuery.of(context).orientation == Orientation.landscape ? 4 : 2;
 
     return Scaffold(
       appBar: AppBar(
@@ -111,16 +133,37 @@ class _HomeState extends State<Home> {
       bottomNavigationBar: BottomAppBar(
         shape: const CircularNotchedRectangle(),
         color: Theme.of(context).colorScheme.primary,
-        child: Row(children: [
-          TextButton.icon(
-            style: TextButton.styleFrom(
-              foregroundColor: Theme.of(context).colorScheme.onPrimary,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            TextButton.icon(
+              style: TextButton.styleFrom(
+                foregroundColor: Theme.of(context).colorScheme.onPrimary,
+              ),
+              icon: const Icon(Icons.bolt),
+              label: const Text("by @ClassHP"),
+              onPressed: _openClassHP,
             ),
-            icon: const Icon(Icons.bolt),
-            label: const Text("by @ClassHP"),
-            onPressed: () {},
-          ),
-        ]),
+            if (kIsWeb)
+              TextButton.icon(
+                style: TextButton.styleFrom(
+                  foregroundColor: Theme.of(context).colorScheme.onPrimary,
+                ),
+                icon: const Icon(Icons.android),
+                label: const Text("Instala la app Android"),
+                onPressed: _openAndroid,
+              ),
+            if (!kIsWeb)
+              TextButton.icon(
+                style: TextButton.styleFrom(
+                  foregroundColor: Theme.of(context).colorScheme.onPrimary,
+                ),
+                icon: const Icon(Icons.share),
+                label: const Text("Compartir"),
+                onPressed: _share,
+              ),
+          ],
+        ),
       ),
     );
   }
