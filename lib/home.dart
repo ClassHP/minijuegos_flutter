@@ -57,6 +57,10 @@ class _HomeState extends State<Home> {
         'https://play.google.com/store/apps/details?id=com.classhp.minijuegosf'));
   }
 
+  _openRepository() {
+    launchUrl(Uri.parse('https://github.com/ClassHP/minijuegos_flutter'));
+  }
+
   _share() {
     Share.share('¡Mira estos minijuegos! https://minijuegosf.web.app');
   }
@@ -70,7 +74,7 @@ class _HomeState extends State<Home> {
               : ThemeMode.light);
     }
     var crossAxisCount =
-        MediaQuery.of(context).orientation == Orientation.landscape ? 4 : 2;
+        MediaQuery.of(context).orientation == Orientation.landscape ? 5 : 2;
 
     return Scaffold(
       appBar: AppBar(
@@ -134,7 +138,6 @@ class _HomeState extends State<Home> {
         shape: const CircularNotchedRectangle(),
         color: Theme.of(context).colorScheme.primary,
         child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
             TextButton.icon(
               style: TextButton.styleFrom(
@@ -144,7 +147,8 @@ class _HomeState extends State<Home> {
               label: const Text("by @ClassHP"),
               onPressed: _openClassHP,
             ),
-            if (kIsWeb)
+            const SizedBox(width: 5),
+            if (kIsWeb) ...[
               TextButton.icon(
                 style: TextButton.styleFrom(
                   foregroundColor: Theme.of(context).colorScheme.onPrimary,
@@ -153,6 +157,16 @@ class _HomeState extends State<Home> {
                 label: const Text("Instala la app Android"),
                 onPressed: _openAndroid,
               ),
+              const SizedBox(width: 5),
+              TextButton.icon(
+                style: TextButton.styleFrom(
+                  foregroundColor: Theme.of(context).colorScheme.onPrimary,
+                ),
+                icon: const Icon(Icons.call_split),
+                label: const Text("GitHub"),
+                onPressed: _openRepository,
+              ),
+            ],
             if (!kIsWeb)
               TextButton.icon(
                 style: TextButton.styleFrom(
