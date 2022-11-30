@@ -49,16 +49,24 @@ class _HomeState extends State<Home> {
   ];
 
   _openClassHP() {
-    launchUrl(Uri.parse('https://twitter.com/classhp'));
+    launchUrl(
+      Uri.parse('https://twitter.com/classhp'),
+      mode: LaunchMode.externalApplication,
+    );
   }
 
   _openAndroid() {
-    launchUrl(Uri.parse(
-        'https://play.google.com/store/apps/details?id=com.classhp.minijuegosf'));
+    launchUrl(
+      Uri.parse('https://play.google.com/store/apps/details?id=com.classhp.minijuegosf'),
+      mode: LaunchMode.externalApplication,
+    );
   }
 
   _openRepository() {
-    launchUrl(Uri.parse('https://github.com/ClassHP/minijuegos_flutter'));
+    launchUrl(
+      Uri.parse('https://github.com/ClassHP/minijuegos_flutter'),
+      mode: LaunchMode.externalApplication,
+    );
   }
 
   _share() {
@@ -137,46 +145,50 @@ class _HomeState extends State<Home> {
       bottomNavigationBar: BottomAppBar(
         shape: const CircularNotchedRectangle(),
         color: Theme.of(context).colorScheme.primary,
-        child: Row(
-          children: [
-            TextButton.icon(
-              style: TextButton.styleFrom(
-                foregroundColor: Theme.of(context).colorScheme.onPrimary,
-              ),
-              icon: const Icon(Icons.bolt),
-              label: const Text("by @ClassHP"),
-              onPressed: _openClassHP,
-            ),
-            const SizedBox(width: 5),
-            if (kIsWeb) ...[
+        child: Container(
+          padding: const EdgeInsets.fromLTRB(5, 5, 70, 5),
+          child: Wrap(
+            alignment: WrapAlignment.center,
+            spacing: 5,
+            runSpacing: 5,
+            children: [
               TextButton.icon(
                 style: TextButton.styleFrom(
                   foregroundColor: Theme.of(context).colorScheme.onPrimary,
                 ),
-                icon: const Icon(Icons.android),
-                label: const Text("Instala la app Android"),
-                onPressed: _openAndroid,
+                icon: const Icon(Icons.bolt),
+                label: const Text("by @ClassHP"),
+                onPressed: _openClassHP,
               ),
-              const SizedBox(width: 5),
-              TextButton.icon(
-                style: TextButton.styleFrom(
-                  foregroundColor: Theme.of(context).colorScheme.onPrimary,
+              if (kIsWeb) ...[
+                TextButton.icon(
+                  style: TextButton.styleFrom(
+                    foregroundColor: Theme.of(context).colorScheme.onPrimary,
+                  ),
+                  icon: const Icon(Icons.call_split),
+                  label: const Text("GitHub"),
+                  onPressed: _openRepository,
                 ),
-                icon: const Icon(Icons.call_split),
-                label: const Text("GitHub"),
-                onPressed: _openRepository,
-              ),
+                TextButton.icon(
+                  style: TextButton.styleFrom(
+                    foregroundColor: Theme.of(context).colorScheme.onPrimary,
+                  ),
+                  icon: const Icon(Icons.android),
+                  label: const Text("Instala la app Android"),
+                  onPressed: _openAndroid,
+                ),
+              ],
+              if (!kIsWeb)
+                TextButton.icon(
+                  style: TextButton.styleFrom(
+                    foregroundColor: Theme.of(context).colorScheme.onPrimary,
+                  ),
+                  icon: const Icon(Icons.share),
+                  label: const Text("Compartir"),
+                  onPressed: _share,
+                ),
             ],
-            if (!kIsWeb)
-              TextButton.icon(
-                style: TextButton.styleFrom(
-                  foregroundColor: Theme.of(context).colorScheme.onPrimary,
-                ),
-                icon: const Icon(Icons.share),
-                label: const Text("Compartir"),
-                onPressed: _share,
-              ),
-          ],
+          ),
         ),
       ),
     );
