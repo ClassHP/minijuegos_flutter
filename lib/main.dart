@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:minijuegos_flutter/main_router.dart';
 import 'firebase_options.dart';
+import 'package:localstorage/localstorage.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -24,6 +25,7 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
+  final LocalStorage _storage = LocalStorage('main_data');
   ThemeMode _themeMode = ThemeMode.system;
 
   ThemeMode get themeMode => _themeMode;
@@ -43,6 +45,19 @@ class _MyAppState extends State<MyApp> {
       ),
       appBarTheme: const AppBarTheme(color: primary),
     );
+  }
+  
+  @override
+  void initState() {
+    super.initState();
+    _storage.ready.then((value) {
+      var theme = _storage.getItem('theme');
+      if(theme != null) {
+        setState(() {
+          _themeMode = theme == 0 ? ThemeMode.light : ThemeMode.dark;
+        });
+      }
+    });
   }
 
   // This widget is the root of your application.
@@ -68,9 +83,14 @@ class _MyAppState extends State<MyApp> {
     setState(() {
       _themeMode = _darkModeOn() ? ThemeMode.light : ThemeMode.dark;
     });
+    saveTheme(_themeMode);
   }
 
   void setTheme(ThemeMode mode) {
     _themeMode = mode;
+  }
+
+  saveTheme(ThemeMode mode) {
+    _storage.setItem('theme', mode == ThemeMode.light ? 0 : 1);
   }
 }
