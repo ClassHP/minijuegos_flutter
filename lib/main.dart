@@ -20,8 +20,7 @@ class MyApp extends StatefulWidget {
   _MyAppState createState() => _MyAppState();
 
   // ignore: library_private_types_in_public_api
-  static _MyAppState of(BuildContext context) =>
-      context.findAncestorStateOfType<_MyAppState>()!;
+  static _MyAppState of(BuildContext context) => context.findAncestorStateOfType<_MyAppState>()!;
 }
 
 class _MyAppState extends State<MyApp> {
@@ -38,21 +37,20 @@ class _MyAppState extends State<MyApp> {
         primarySwatch: primary,
         accentColor: secondary,
         brightness: brightness,
-        backgroundColor:
-            brightness == Brightness.light ? Colors.white : Colors.grey[800],
+        backgroundColor: brightness == Brightness.light ? Colors.white : Colors.grey[800],
       ).copyWith(
         secondary: secondary,
       ),
       appBarTheme: const AppBarTheme(color: primary),
     );
   }
-  
+
   @override
   void initState() {
     super.initState();
     _storage.ready.then((value) {
       var theme = _storage.getItem('theme');
-      if(theme != null) {
+      if (theme != null) {
         setState(() {
           _themeMode = theme == 0 ? ThemeMode.light : ThemeMode.dark;
         });
@@ -63,19 +61,18 @@ class _MyAppState extends State<MyApp> {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp.router(
+    return MaterialApp(
       title: 'Minijuegos Flutter',
       theme: _theme(Brightness.light),
       darkTheme: _theme(Brightness.dark), // standard dark theme
       themeMode: _themeMode, // device controls theme
-      routerConfig: MainRouter.router,
       debugShowCheckedModeBanner: false,
+      routes: MainRouter.routes,
     );
   }
 
   bool _darkModeOn() {
-    return Theme.of(context).brightness == Brightness.dark ||
-        _themeMode == ThemeMode.dark;
+    return Theme.of(context).brightness == Brightness.dark || _themeMode == ThemeMode.dark;
   }
 
   /// MyApp.of(context).toggleTheme();

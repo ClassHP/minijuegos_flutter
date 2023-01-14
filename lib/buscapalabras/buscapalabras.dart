@@ -3,6 +3,7 @@ import 'package:minijuegos_flutter/buscapalabras/buscapalabras_logic.dart';
 import 'package:minijuegos_flutter/widgets/download_android_bar.dart';
 import 'package:minijuegos_flutter/widgets/fitted_text.dart';
 import 'package:minijuegos_flutter/widgets/info_box.dart';
+import 'buscapalabras_service.dart';
 
 class Buscapalabras extends StatefulWidget {
   const Buscapalabras({Key? key}) : super(key: key);
@@ -13,6 +14,8 @@ class Buscapalabras extends StatefulWidget {
 
 class _BuscapalabrasState extends State<Buscapalabras> {
   final BuscapalabrasLogic _logic = BuscapalabrasLogic();
+  final BuscapalabrasService _service = BuscapalabrasService();
+  bool _loading = true;
 
   _score() => _logic.score.toString().padLeft(4, '0');
 
@@ -32,12 +35,27 @@ class _BuscapalabrasState extends State<Buscapalabras> {
     setState(() {
       _logic.send();
     });
+    if (_logic.isEnd) {
+      _service.showWin(context, _logic.score, _logic.longWord).then((_) {
+        setState(() {
+          _logic.init(false);
+        });
+      });
+    }
   }
 
   _init() {
-    setState(() {
-      _logic.init(false);
+    _service.showConfirm(context).then((value) {
+      if (value) {
+        setState(() {
+          _logic.init(false);
+        });
+      }
     });
+  }
+
+  _showScore() {
+    _service.showScore(context);
   }
 
   String _strAddScore() {
@@ -50,13 +68,17 @@ class _BuscapalabrasState extends State<Buscapalabras> {
     super.initState();
     _logic.ready.then((value) {
       setState(() {
-        _logic.init(false);
+        _logic.init(true);
+        _loading = false;
       });
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    var loading = const Center(
+      child: CircularProgressIndicator(),
+    );
     return Scaffold(
       appBar: AppBar(
         title: const Text('Busca palabras'),
@@ -65,40 +87,38 @@ class _BuscapalabrasState extends State<Buscapalabras> {
             onPressed: _init,
             icon: Icon(_logic.isEnd ? Icons.play_arrow : Icons.refresh),
           ),
-          const IconButton(
-            onPressed: null,
-            icon: Icon(Icons.timeline),
+          IconButton(
+            onPressed: _showScore,
+            icon: const Icon(Icons.timeline),
           ),
         ],
       ),
-      body: Container(
-        padding: const EdgeInsets.all(10),
-        alignment: Alignment.center,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            _Board(_logic, _onTapBlock),
-            const SizedBox(height: 10),
-            _BoardSelected(_logic, _onTapSelected),
-            const SizedBox(height: 5),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
+      body: _loading
+          ? loading
+          : ListView(
+              padding: const EdgeInsets.all(10),
               children: [
-                InfoBox(text: _score(), icon1: Icons.timeline),
-                const SizedBox(width: 10),
-                ElevatedButton.icon(
-                  icon: const Icon(Icons.send),
-                  label: Text('Enviar ${_strAddScore()}'),
-                  style: ElevatedButton.styleFrom(
-                      textStyle: const TextStyle(fontSize: 20),
-                      minimumSize: const Size(100, 43)),
-                  onPressed: _logic.isValid ? _onSend : null,
+                _Board(_logic, _onTapBlock),
+                const SizedBox(height: 10),
+                _BoardSelected(_logic, _onTapSelected),
+                const SizedBox(height: 5),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    InfoBox(text: _score(), icon1: Icons.timeline),
+                    const SizedBox(width: 10),
+                    ElevatedButton.icon(
+                      icon: const Icon(Icons.send),
+                      label: Text('Enviar ${_strAddScore()}'),
+                      style: ElevatedButton.styleFrom(
+                          textStyle: const TextStyle(fontSize: 20),
+                          minimumSize: const Size(100, 43)),
+                      onPressed: _logic.isValid ? _onSend : null,
+                    ),
+                  ],
                 ),
               ],
             ),
-          ],
-        ),
-      ),
       bottomNavigationBar: const DownloadAndroidBar(),
     );
   }
@@ -121,22 +141,25 @@ class _Board extends StatelessWidget {
         children: _logic.columns.map<Widget>((col) {
           var cells = col.where((e) => !e.selected);
           return Flexible(
-            child: Column(
-              //mainAxisSize: MainAxisSize.min,
-              children: cells.map<Widget>((block) {
-                if (cells.last == block) {
-                  return _Block(block, _onTapBlock);
-                }
-                return SizedBox(
-                  height: 18,
-                  child: OverflowBox(
-                    alignment: Alignment.topCenter,
-                    //minHeight: 0,
-                    maxHeight: double.infinity,
-                    child: _Block(block, null),
-                  ),
-                );
-              }).toList(),
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 50),
+              child: Column(
+                //mainAxisSize: MainAxisSize.min,
+                children: cells.map<Widget>((block) {
+                  if (cells.last == block) {
+                    return _Block(block, _onTapBlock);
+                  }
+                  return SizedBox(
+                    height: 18,
+                    child: OverflowBox(
+                      alignment: Alignment.topCenter,
+                      //minHeight: 0,
+                      maxHeight: double.infinity,
+                      child: _Block(block, null),
+                    ),
+                  );
+                }).toList(),
+              ),
             ),
           );
         }).toList(),
@@ -149,8 +172,7 @@ class _BoardSelected extends StatelessWidget {
   final BuscapalabrasLogic _logic;
   final void Function(Block) _onTapBlock;
 
-  const _BoardSelected(this._logic, this._onTapBlock, {Key? key})
-      : super(key: key);
+  const _BoardSelected(this._logic, this._onTapBlock, {Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -161,11 +183,7 @@ class _BoardSelected extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: _logic.selected.map<Widget>((block) {
           return Flexible(
-            child: LimitedBox(
-              maxHeight: 50,
-              maxWidth: 50,
-              child: _Block(block, _onTapBlock),
-            ),
+            child: _Block(block, _onTapBlock),
           );
         }).toList(),
       ),
@@ -247,11 +265,15 @@ class _Block extends StatelessWidget {
         ),
       ),
     );
-    return AspectRatio(
-      aspectRatio: 4 / 5,
-      child: Padding(
-        padding: const EdgeInsets.all(2),
-        child: box,
+    return LimitedBox(
+      maxHeight: 50,
+      maxWidth: 50,
+      child: AspectRatio(
+        aspectRatio: 4 / 5,
+        child: Padding(
+          padding: const EdgeInsets.all(2),
+          child: box,
+        ),
       ),
     );
   }

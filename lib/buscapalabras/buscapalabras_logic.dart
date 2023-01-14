@@ -1,20 +1,22 @@
 import 'dart:math';
 import 'package:localstorage/localstorage.dart';
-import 'words_es_all.dart';
+import 'package:minijuegos_flutter/buscapalabras/dictionary.dart';
 
 class BuscapalabrasLogic {
   bool isEnd = false;
   bool isWin = false;
   bool _isValid = false;
   int score = 0;
+  String longWord = '';
   final List<List<Block>> _columns = [];
   final List<Block> _selected = [];
   final LocalStorage _storage = LocalStorage('buscapalabras_data');
   final random = Random();
+  final Dictionary _dictionary = Dictionary();
+  late Future ready;
 
   List<List<Block>> get columns => _columns;
   List<Block> get selected => _selected;
-  Future get ready => _storage.ready;
   bool get isValid => _isValid;
   int get multiplier => _selected.length > 7
       ? 4
@@ -23,7 +25,12 @@ class BuscapalabrasLogic {
           : _selected.length > 5
               ? 2
               : 1;
-  int get addScore => _selected.length > 0 ? _selected.map((e) => e.addScore).reduce((a, b) => a + b) : 0;
+  int get addScore =>
+      _selected.isNotEmpty ? _selected.map((e) => e.addScore).reduce((a, b) => a + b) : 0;
+
+  BuscapalabrasLogic() {
+    ready = Future.wait([_storage.ready, _dictionary.ready]);
+  }
 
   init(bool loadSaved) {
     _columns.clear();
@@ -32,18 +39,21 @@ class BuscapalabrasLogic {
     isWin = false;
     _isValid = false;
     score = 0;
+    longWord = '';
     if (!loadSaved || !_initSaved()) {
-      var letters = _getLetters240();
-      for (int i = 0; i < 10; i++) {
-        List<Block> col = [];
-        _columns.add(col);
-        for (var j = 0; j < 24; j++) {
-          //var letter = _getRandLetter();
-          var letter = letters.removeAt(0);
-          var addScore = _getAddScore(letter);
-          col.add(Block(letter, addScore));
+      do {
+        var letters = _getLetters240();
+        for (int i = 0; i < 10; i++) {
+          List<Block> col = [];
+          _columns.add(col);
+          for (var j = 0; j < 24; j++) {
+            //var letter = _getRandLetter();
+            var letter = letters.removeAt(0);
+            var addScore = _getAddScore(letter);
+            col.add(Block(letter, addScore));
+          }
         }
-      }
+      } while (_isEndEval());
       _saveStorage();
     }
   }
@@ -70,8 +80,50 @@ class BuscapalabrasLogic {
       for (var col in _columns) {
         col.removeWhere((block) => block.selected);
       }
+      _columns.removeWhere((element) => element.isEmpty);
+      var wordSelected = _selected.map((e) => e.letter).join();
+      longWord = longWord.length < wordSelected.length ? wordSelected : longWord;
       _selected.clear();
+      isEnd = _isEndEval();
+      _saveStorage();
       return true;
+    }
+    return false;
+  }
+
+  bool _isEndEval() {
+    if (_columns.any((element) => element.isEmpty)) {
+      return true;
+    }
+    for (var col in _columns) {
+      if (_isWordExistRec('', col)) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  bool _isWordExistRec(String word, List<Block> col) {
+    if (col.isNotEmpty && word.length < 23) {
+      var block = col.removeLast();
+      word += block.letter;
+      if (word.length >= 2) {
+        if (!_dictionary.startsWith(word)) {
+          col.add(block);
+          return false;
+        }
+        if (_dictionary.exists(word)) {
+          col.add(block);
+          return true;
+        }
+      }
+      for (var col2 in _columns) {
+        if (col2.isNotEmpty && _isWordExistRec(word, col2)) {
+          col.add(block);
+          return true;
+        }
+      }
+      col.add(block);
     }
     return false;
   }
@@ -79,11 +131,7 @@ class BuscapalabrasLogic {
   bool _isValidWord() {
     if (_selected.length > 1) {
       var wordSelected = _selected.map((e) => e.letter).join();
-      var index = wordsEsAll
-          .indexWhere((w) => _cleanWord(w).toUpperCase() == wordSelected);
-      if (index >= 0) {
-        return true;
-      }
+      return _dictionary.exists(wordSelected);
     }
     return false;
   }
@@ -94,6 +142,7 @@ class BuscapalabrasLogic {
       return false;
     }
     score = data['score'];
+    longWord = data['longWord'] ?? '';
     var columns = data['columns'];
     for (var column in columns) {
       List<Block> col = [];
@@ -110,6 +159,7 @@ class BuscapalabrasLogic {
     if (!isEnd) {
       var value = {
         'score': score,
+        'longWord': longWord,
         'columns': _columns.map((e) => e.map((f) => f.letter).join()).toList(),
       };
       _storage.setItem('saved', value);
@@ -188,15 +238,6 @@ class BuscapalabrasLogic {
       "Z": 9
     };
     return abcScore[letter];
-  }
-
-  String _cleanWord(String w) {
-    var specials = 'áéíóúü'.split('');
-    var replace = 'aeiouu'.split('');
-    for (var i = 0; i < specials.length; i++) {
-      w = w.replaceAll(specials[i], replace[i]);
-    }
-    return w;
   }
 }
 

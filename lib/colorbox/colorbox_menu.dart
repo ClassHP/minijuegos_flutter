@@ -1,10 +1,7 @@
 import 'dart:async';
 import 'dart:ui';
-
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:minijuegos_flutter/widgets/download_android_bar.dart';
-
 import 'colorbox_play.dart';
 
 class ColorboxMenu extends StatefulWidget {
@@ -44,7 +41,7 @@ class _ColorboxMenuState extends State<ColorboxMenu> {
   }
 
   void _play() {
-    GoRouter.of(context).go('/colorbox/play');
+    Navigator.pushNamed(context, '/colorbox/play');
   }
 
   @override
@@ -121,7 +118,7 @@ class _ColorboxMenuState extends State<ColorboxMenu> {
                   icon: const Icon(Icons.timeline),
                   label: const Text('Puntuaciones'),
                   backgroundColor: Theme.of(context).colorScheme.secondary,
-                  onPressed: () => GoRouter.of(context).go('/colorbox/score'),
+                  onPressed: () => Navigator.pushNamed(context, '/colorbox/score'),
                 ),
               ],
             ),

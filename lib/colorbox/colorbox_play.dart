@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:math';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class ColorboxPlay extends StatefulWidget {
@@ -27,9 +26,7 @@ class _ColorboxPlayState extends State<ColorboxPlay> {
 
   int _getSpeed() {
     //var s = (_speedStart.toDouble() * 1.3 - 120 * log(75 * _score.toDouble() + 1)).toInt();
-    var s =
-        (_speedStart.toDouble() * 1.2 - 100 * pow(5 * _score.toDouble(), 1 / 3))
-            .toInt();
+    var s = (_speedStart.toDouble() * 1.2 - 100 * pow(5 * _score.toDouble(), 1 / 3)).toInt();
     s = s < _speedMax ? _speedMax : s;
     s = s > _speedStart ? _speedStart : s;
     return s;
@@ -104,7 +101,7 @@ class _ColorboxPlayState extends State<ColorboxPlay> {
     _stop();
     var score = _score;
     if (score == 0) {
-      GoRouter.of(context).pop();
+      Navigator.pop(context);
       return;
     }
     showDialog<String>(
@@ -138,8 +135,8 @@ class _ColorboxPlayState extends State<ColorboxPlay> {
             child: const Text('Cancelar'),
           ),
           ElevatedButton(
-            style: ElevatedButton.styleFrom(
-                backgroundColor: Theme.of(context).colorScheme.secondary),
+            style:
+                ElevatedButton.styleFrom(backgroundColor: Theme.of(context).colorScheme.secondary),
             onPressed: () {
               _saveScore(_name, score);
               Navigator.pop(context, 'OK');
@@ -148,7 +145,7 @@ class _ColorboxPlayState extends State<ColorboxPlay> {
           ),
         ],
       ),
-    ).then((value) => GoRouter.of(context).pop());
+    ).then((value) => Navigator.pop(context));
   }
 
   bool _isEnd() {
@@ -221,12 +218,7 @@ class _ColorboxPlayState extends State<ColorboxPlay> {
 
 class ColorBox {
   static final _rng = Random();
-  static final List<Color> _colors = [
-    Colors.blue,
-    Colors.red,
-    Colors.green,
-    Colors.yellow
-  ];
+  static final List<Color> _colors = [Colors.blue, Colors.red, Colors.green, Colors.yellow];
 
   Color color = Colors.black;
   int colorId = 0;
