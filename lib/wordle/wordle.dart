@@ -1,12 +1,12 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:minijuegos_flutter/tools.dart';
 import 'package:minijuegos_flutter/widgets/download_android_bar.dart';
 import 'package:minijuegos_flutter/widgets/fitted_text.dart';
 import 'package:minijuegos_flutter/wordle/keyboard.dart';
 import 'package:minijuegos_flutter/wordle/wordle_logic.dart';
 import 'package:share_plus/share_plus.dart';
-import 'package:flutter/foundation.dart' show kIsWeb;
 
 class Wordle extends StatefulWidget {
   const Wordle({Key? key}) : super(key: key);
@@ -27,9 +27,9 @@ class _WordleState extends State<Wordle> {
   }
 
   _timerCallback(Timer _) {
+    //_logic.printRandomWord();
     var now = DateTime.now();
-    var tomorrow =
-        DateTime(now.year, now.month, now.day).add(const Duration(days: 1));
+    var tomorrow = DateTime(now.year, now.month, now.day).add(const Duration(days: 1));
     var dateDif = tomorrow.difference(now);
     setState(() {
       _nextAt = dateDif.toString().split('.')[0];
@@ -92,8 +92,7 @@ class _WordleState extends State<Wordle> {
   }
 
   _share() {
-    Share.share(
-        '¡Te reto a descubrir la palabra del día! https://minijuegosf.web.app/#/wordle');
+    Share.share('¡Te reto a descubrir la palabra del día! https://minijuegosf.web.app/#/wordle');
   }
 
   @override
@@ -118,7 +117,7 @@ class _WordleState extends State<Wordle> {
       padding: const EdgeInsets.all(10),
       child: Column(
         children: [
-          if (!kIsWeb) ...[
+          if (!Tools.isWeb) ...[
             ElevatedButton.icon(
               icon: const Icon(Icons.share),
               label: const Text('Compartir'),
@@ -169,12 +168,6 @@ class _WordleState extends State<Wordle> {
 
 class _Board extends StatelessWidget {
   final WordleLogic _logic;
-  final List<Color> _colors = const [
-    Colors.transparent,
-    Colors.blueGrey,
-    Colors.green,
-    Colors.orange
-  ];
   final void Function(Block) onTapBlock;
 
   const _Board(this._logic, this.onTapBlock, {Key? key}) : super(key: key);
@@ -195,31 +188,51 @@ class _Board extends StatelessWidget {
                 }
               : null,
           borderRadius: const BorderRadius.all(Radius.circular(10)),
-          child: Container(
-            alignment: Alignment.center,
-            decoration: BoxDecoration(
-              color: _colors[cell.color],
-              //color: _logic.blocks.indexOf(cell) % 2 == 0 ? Colors.blueGrey.shade100 : Colors.blueGrey.shade200,
-              borderRadius: const BorderRadius.all(Radius.circular(10)),
-              border: Border.all(
-                color: _logic.selected == cell && !_logic.isEnd
-                    ? Colors.lightBlue
-                    : Colors.blueGrey,
-                width: 3,
-              ),
-            ),
-            child: cell.letter != ''
-                ? FittedText(
-                    cell.letter,
-                    color: cell.color != 0
-                        ? Colors.white
-                        : Theme.of(context).textTheme.headline5!.color,
-                    fontWeight: FontWeight.bold,
-                  )
-                : null,
-          ),
+          child: _Block(logic: _logic, cell: cell),
         );
       }).toList(),
+    );
+  }
+}
+
+class _Block extends StatelessWidget {
+  const _Block({
+    Key? key,
+    required WordleLogic logic,
+    required Block cell,
+  })  : _logic = logic,
+        _cell = cell,
+        super(key: key);
+
+  final List<Color> _colors = const [
+    Colors.transparent,
+    Colors.blueGrey,
+    Colors.green,
+    Colors.orange
+  ];
+  final WordleLogic _logic;
+  final Block _cell;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      alignment: Alignment.center,
+      decoration: BoxDecoration(
+        color: _colors[_cell.color],
+        //color: _logic.blocks.indexOf(cell) % 2 == 0 ? Colors.blueGrey.shade100 : Colors.blueGrey.shade200,
+        borderRadius: const BorderRadius.all(Radius.circular(10)),
+        border: Border.all(
+          color: _logic.selected == _cell && !_logic.isEnd ? Colors.lightBlue : Colors.blueGrey,
+          width: 3,
+        ),
+      ),
+      child: _cell.letter != ''
+          ? FittedText(
+              _cell.letter,
+              color: _cell.color != 0 ? Colors.white : Theme.of(context).textTheme.headline5!.color,
+              fontWeight: FontWeight.bold,
+            )
+          : null,
     );
   }
 }

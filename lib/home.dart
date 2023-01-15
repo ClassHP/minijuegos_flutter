@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
+import 'package:minijuegos_flutter/tools.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:flutter/foundation.dart' show kIsWeb;
 import 'main.dart';
 
 class Home extends StatefulWidget {
@@ -17,34 +16,40 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   final List<_MenuItem> _menuItems = [
     _MenuItem(
+      title: 'Buscapalabras',
+      descrip: 'Juego de palabras',
+      assetName: 'assets/images/buscapalabras.jpg',
+      location: '/buscapalabras',
+    ),
+    _MenuItem(
+      title: 'Wordle (es)',
+      descrip: 'Juego de palabras',
+      assetName: 'assets/images/wordle.jpg',
+      location: '/wordle',
+    ),
+    _MenuItem(
       title: 'ColorBox',
       descrip: 'Juego de agilidad',
-      assetName: 'images/colorbox.jpg',
+      assetName: 'assets/images/colorbox.jpg',
       location: '/colorbox',
+    ),
+    _MenuItem(
+      title: 'Buscaminas',
+      descrip: 'Juego de lógica',
+      assetName: 'assets/images/buscaminas.jpg',
+      location: '/buscaminas',
     ),
     _MenuItem(
       title: 'Otelo / Reversi',
       descrip: 'Juego de tablero',
-      assetName: 'images/otelo.jpg',
+      assetName: 'assets/images/otelo.jpg',
       location: '/otelo',
     ),
     _MenuItem(
       title: '2048',
       descrip: 'Juego numérico',
-      assetName: 'images/2048.jpg',
+      assetName: 'assets/images/2048.jpg',
       location: '/2048',
-    ),
-    _MenuItem(
-      title: 'Buscaminas',
-      descrip: 'Juego de lógica',
-      assetName: 'images/buscaminas.jpg',
-      location: '/buscaminas',
-    ),
-    _MenuItem(
-      title: 'Wordle (es)',
-      descrip: 'Juego de palabras',
-      assetName: 'images/wordle.jpg',
-      location: '/wordle',
     ),
   ];
 
@@ -73,16 +78,18 @@ class _HomeState extends State<Home> {
     Share.share('¡Mira estos minijuegos! https://minijuegosf.web.app');
   }
 
+  _goMenu(_MenuItem menuItem) {
+    Navigator.pushNamed(context, menuItem.location);
+  }
+
   @override
   Widget build(BuildContext context) {
     if (MyApp.of(context).themeMode == ThemeMode.system) {
-      MyApp.of(context).setTheme(
-          MediaQuery.of(context).platformBrightness == Brightness.dark
-              ? ThemeMode.dark
-              : ThemeMode.light);
+      MyApp.of(context).setTheme(MediaQuery.of(context).platformBrightness == Brightness.dark
+          ? ThemeMode.dark
+          : ThemeMode.light);
     }
-    var crossAxisCount =
-        MediaQuery.of(context).orientation == Orientation.landscape ? 5 : 2;
+    var crossAxisCount = MediaQuery.of(context).orientation == Orientation.landscape ? 5 : 2;
 
     return Scaffold(
       appBar: AppBar(
@@ -98,14 +105,13 @@ class _HomeState extends State<Home> {
         children: _menuItems.map<Widget>((menuItem) {
           return InkResponse(
             onTap: () {
-              GoRouter.of(context).go(menuItem.location);
+              _goMenu(menuItem);
             },
             child: GridTile(
               footer: Material(
                 color: Colors.transparent,
                 shape: const RoundedRectangleBorder(
-                  borderRadius:
-                      BorderRadius.vertical(bottom: Radius.circular(8)),
+                  borderRadius: BorderRadius.vertical(bottom: Radius.circular(8)),
                 ),
                 clipBehavior: Clip.antiAlias,
                 child: GridTileBar(
@@ -123,8 +129,7 @@ class _HomeState extends State<Home> {
                 ),
               ),
               child: Material(
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8)),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                 clipBehavior: Clip.antiAlias,
                 child: Image.asset(
                   menuItem.assetName,
@@ -160,7 +165,7 @@ class _HomeState extends State<Home> {
                 label: const Text("by @ClassHP"),
                 onPressed: _openClassHP,
               ),
-              if (kIsWeb) ...[
+              if (Tools.isWeb) ...[
                 TextButton.icon(
                   style: TextButton.styleFrom(
                     foregroundColor: Theme.of(context).colorScheme.onPrimary,
@@ -178,7 +183,7 @@ class _HomeState extends State<Home> {
                   onPressed: _openAndroid,
                 ),
               ],
-              if (!kIsWeb)
+              if (!Tools.isWeb)
                 TextButton.icon(
                   style: TextButton.styleFrom(
                     foregroundColor: Theme.of(context).colorScheme.onPrimary,

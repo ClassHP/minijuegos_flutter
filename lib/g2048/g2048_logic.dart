@@ -2,8 +2,8 @@ import 'dart:math';
 
 class G2048Logic {
   final List<Cell> _cells = [];
-  final int _xMax = 4;
-  final int _yMax = 4;
+  final int _xMax = 5;
+  final int _yMax = 5;
   bool _isEnd = false;
   bool _isWin = false;
   int _score = 0;
@@ -100,9 +100,7 @@ class G2048Logic {
 
     var list = _mergeList(dx, dy);
     for (var item in list) {
-      if (!item[0].isMerge &&
-          !item[1].isMerge &&
-          item[0].value == item[1].value) {
+      if (!item[0].isMerge && !item[1].isMerge && item[0].value == item[1].value) {
         item[0].value = item[1].value * 2;
         item[0].isMerge = true;
         item[1].value = 0;

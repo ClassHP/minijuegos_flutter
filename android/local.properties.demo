@@ -1,7 +1,7 @@
-sdk.dir=C:\\Users\\heli_\\AppData\\Local\\Android\\sdk
+sdk.dir=C:\\Users\\[userName]\\AppData\\Local\\Android\\sdk
 flutter.sdk=C:\\Dev\\flutter
 flutter.buildMode=release
-flutter.versionName=1.0.4
-flutter.versionCode=5
+flutter.versionName=1.0.3
+flutter.versionCode=4
 flutter.minSdkVersion=21
 flutter.compileSdkVersion=33

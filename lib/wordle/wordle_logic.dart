@@ -18,6 +18,10 @@ class WordleLogic {
 
   Block get selected => blocks[y * width + x];
   Future get ready => _storage.ready;
+  
+  /*void printRandomWord() {
+    print(words[Random().nextInt(words.length)]);
+  }*/
 
   init(DateTime date) {
     x = y = 0;

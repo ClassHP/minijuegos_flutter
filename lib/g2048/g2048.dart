@@ -53,11 +53,15 @@ class _G2048State extends State<G2048> {
     int idy = dy > 0 ? 1 : (dy < 0 ? -1 : 0);
 
     setState(() {
-      _logic.merge(idx, idy, onMove: () => setState(() {}),);
+      _logic.merge(
+        idx,
+        idy,
+        onMove: () => setState(() {}),
+      );
     });
 
-    if(_logic.isEnd) {
-      if(_logic.isWin) {
+    if (_logic.isEnd) {
+      if (_logic.isWin) {
         await _showWin();
       } else {
         await _showLose();
@@ -127,8 +131,7 @@ class _G2048State extends State<G2048> {
                       const SizedBox(width: 5),
                       Text(
                         _time(),
-                        style:
-                            const TextStyle(fontSize: 20, color: Colors.white),
+                        style: const TextStyle(fontSize: 20, color: Colors.white),
                       ),
                     ],
                   ),
@@ -146,7 +149,8 @@ class _G2048State extends State<G2048> {
               ),
             ),
             const SizedBox(height: 20),
-            const Text('Arrastra horizontal o verticalmente para sumar los números hasta llegar al 2048.'),
+            const Text(
+                'Arrastra horizontal o verticalmente para sumar los números hasta llegar al 2048.'),
           ],
         ),
       ),
@@ -198,7 +202,7 @@ class _Board extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GridView.count(
-      crossAxisCount: 4,
+      crossAxisCount: 5,
       mainAxisSpacing: 2,
       crossAxisSpacing: 2,
       childAspectRatio: 1,
@@ -222,9 +226,7 @@ class _Board extends StatelessWidget {
                 color: _color(cell.value),
                 borderRadius: const BorderRadius.all(Radius.circular(2)),
               ),
-              child: cell.value != 0
-                  ? FittedText(cell.value.toString())
-                  : null,
+              child: cell.value != 0 ? FittedText(cell.value.toString()) : null,
             ),
           ),
         );
@@ -256,7 +258,7 @@ class _BoardGesture extends StatelessWidget {
         initialX = details.globalPosition.dx;
       },
       onHorizontalDragUpdate: (DragUpdateDetails details) {
-        if(initialX != null) {
+        if (initialX != null) {
           distanceX = details.globalPosition.dx - initialX!;
         }
       },
@@ -270,7 +272,7 @@ class _BoardGesture extends StatelessWidget {
         initialY = details.globalPosition.dy;
       },
       onVerticalDragUpdate: (DragUpdateDetails details) {
-        if(initialY != null) {
+        if (initialY != null) {
           distanceY = details.globalPosition.dy - initialY!;
         }
       },
