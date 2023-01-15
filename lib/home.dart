@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:minijuegos_flutter/tools.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:flutter/foundation.dart' show kIsWeb;
 import 'main.dart';
 
 class Home extends StatefulWidget {
@@ -165,7 +165,7 @@ class _HomeState extends State<Home> {
                 label: const Text("by @ClassHP"),
                 onPressed: _openClassHP,
               ),
-              if (kIsWeb) ...[
+              if (Tools.isWeb) ...[
                 TextButton.icon(
                   style: TextButton.styleFrom(
                     foregroundColor: Theme.of(context).colorScheme.onPrimary,
@@ -183,7 +183,7 @@ class _HomeState extends State<Home> {
                   onPressed: _openAndroid,
                 ),
               ],
-              if (!kIsWeb)
+              if (!Tools.isWeb)
                 TextButton.icon(
                   style: TextButton.styleFrom(
                     foregroundColor: Theme.of(context).colorScheme.onPrimary,

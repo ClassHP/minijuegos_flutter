@@ -1,12 +1,12 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:minijuegos_flutter/tools.dart';
 import 'package:minijuegos_flutter/widgets/download_android_bar.dart';
 import 'package:minijuegos_flutter/widgets/fitted_text.dart';
 import 'package:minijuegos_flutter/wordle/keyboard.dart';
 import 'package:minijuegos_flutter/wordle/wordle_logic.dart';
 import 'package:share_plus/share_plus.dart';
-import 'package:flutter/foundation.dart' show kIsWeb;
 
 class Wordle extends StatefulWidget {
   const Wordle({Key? key}) : super(key: key);
@@ -117,7 +117,7 @@ class _WordleState extends State<Wordle> {
       padding: const EdgeInsets.all(10),
       child: Column(
         children: [
-          if (!kIsWeb) ...[
+          if (!Tools.isWeb) ...[
             ElevatedButton.icon(
               icon: const Icon(Icons.share),
               label: const Text('Compartir'),
