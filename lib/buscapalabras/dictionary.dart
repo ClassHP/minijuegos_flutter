@@ -4,6 +4,7 @@ import 'package:flutter/services.dart' show rootBundle;
 class Dictionary {
   late Future ready;
   static final Map<String, Set<String>> _mapDic = {};
+  int _wordCount = 0;
 
   Dictionary() {
     ready = loadData();
@@ -16,7 +17,7 @@ class Dictionary {
     var aff = await _loadAsset('assets/files/dictionary-es.aff');
     var dic = await _loadAsset('assets/files/dictionary-es.dic');
     Map<String, List<_Rule>> mapAff = {};
-    Map<String, List<String>> mapDic = {};
+    List<Future<void>> futures = [];
 
     var affLines = aff.split('\n');
     for (var line in affLines) {
@@ -46,29 +47,27 @@ class Dictionary {
     var dicLines = dic.split('\n');
     dicLines.removeAt(0);
     for (var line in dicLines) {
-      var lineSplit = line.split('/');
-      mapDic[lineSplit[0]] = lineSplit.length == 2 ? lineSplit[1].split('') : [];
-      _addMapDic(lineSplit[0]);
-    }
-
-    for (var wordIndex in mapDic.keys.toList()) {
-      var rules = mapDic[wordIndex]!;
-      for (var ruleIndex in rules) {
-        var rule = mapAff[ruleIndex];
-        if (rule != null) {
-          for (var entry in rule) {
-            if (entry.match.hasMatch(wordIndex)) {
-              var nextWord = wordIndex.replaceFirst(entry.remove, entry.add);
-              mapDic[nextWord] = mapDic[nextWord] ?? [];
-              _addMapDic(nextWord);
-              for (var contRuleIndex in entry.continuation) {
-                var rule2 = mapAff[contRuleIndex];
-                if (rule2 != null) {
-                  for (var entry2 in rule2) {
-                    if (entry2.match.hasMatch(nextWord)) {
-                      var w = nextWord.replaceFirst(entry2.remove, entry2.add);
-                      mapDic[w] = mapDic[w] ?? [];
-                      _addMapDic(w);
+      futures.add(Future(() {
+        var lineSplit = line.split('/');
+        var word = lineSplit[0];
+        var wordRules = lineSplit.length == 2 ? lineSplit[1].split('') : [];
+        for (var ruleIndex in wordRules) {
+          var rules = mapAff[ruleIndex];
+          if (rules != null && rules.isNotEmpty) {
+            for (var rule in rules) {
+              if (rule.match.hasMatch(word)) {
+                var nextWord = word.replaceFirst(rule.remove, rule.add);
+                //mapDic[nextWord] = mapDic[nextWord] ?? [];
+                _addMapDic(nextWord);
+                for (var contRuleIndex in rule.continuation) {
+                  var rule2 = mapAff[contRuleIndex];
+                  if (rule2 != null) {
+                    for (var entry2 in rule2) {
+                      if (entry2.match.hasMatch(nextWord)) {
+                        var w = nextWord.replaceFirst(entry2.remove, entry2.add);
+                        //mapDic[w] = mapDic[w] ?? [];
+                        _addMapDic(w);
+                      }
                     }
                   }
                 }
@@ -76,8 +75,9 @@ class Dictionary {
             }
           }
         }
-      }
+      }));
     }
+    await Future.wait(futures);
   }
 
   bool exists(String word) {
@@ -92,11 +92,13 @@ class Dictionary {
 
   void _addMapDic(String word) {
     //_mapDic[word] = true;
+    word = word.toLowerCase();
     if (word.length >= 2) {
       if (_mapDic[word[0]] == null) {
         _mapDic[word[0]] = {};
       }
-      _mapDic[word[0]]!.add(_cleanWord(word.toLowerCase()));
+      _mapDic[word[0]]!.add(_cleanWord(word));
+      _wordCount++;
     }
   }
 
@@ -105,12 +107,12 @@ class Dictionary {
   }
 
   String _cleanWord(String w) {
-    var specials = 'áéíóúü'.split('');
-    var replace = 'aeiouu'.split('');
-    for (var i = 0; i < specials.length; i++) {
-      w = w.replaceAll(specials[i], replace[i]);
+    const mapSpecials = {'á': 'a', 'é': 'e', 'í': 'i', 'ó': 'o', 'ú': 'u', 'ü': 'u'};
+    var cleanWord = '';
+    for (var i = 0; i < w.length; i++) {
+      cleanWord += mapSpecials[w[i]] ?? w[i];
     }
-    return w;
+    return cleanWord;
   }
 }
 
