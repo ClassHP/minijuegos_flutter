@@ -27,6 +27,7 @@ class BuscapalabrasLogic {
               : 1;
   int get addScore =>
       _selected.isNotEmpty ? _selected.map((e) => e.addScore).reduce((a, b) => a + b) : 0;
+  //Stream<double> get readyDictionary => _dictionary.ready;
 
   BuscapalabrasLogic() {
     ready = Future.wait([_storage.ready, _dictionary.ready]);
@@ -41,19 +42,17 @@ class BuscapalabrasLogic {
     score = 0;
     longWord = '';
     if (!loadSaved || !_initSaved()) {
-      do {
-        var letters = _getLetters240();
-        for (int i = 0; i < 10; i++) {
-          List<Block> col = [];
-          _columns.add(col);
-          for (var j = 0; j < 24; j++) {
-            //var letter = _getRandLetter();
-            var letter = letters.removeAt(0);
-            var addScore = _getAddScore(letter);
-            col.add(Block(letter, addScore));
-          }
+      var letters = _getLetters240();
+      for (int i = 0; i < 10; i++) {
+        List<Block> col = [];
+        _columns.add(col);
+        for (var j = 0; j < 24; j++) {
+          //var letter = _getRandLetter();
+          var letter = letters.removeAt(0);
+          var addScore = _getAddScore(letter);
+          col.add(Block(letter, addScore));
         }
-      } while (_isEndEval());
+      }
       _saveStorage();
     }
   }
