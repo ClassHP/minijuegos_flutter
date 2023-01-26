@@ -3,7 +3,7 @@ import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:minijuegos_flutter/widgets/fitted_text.dart';
 
 class Keyboard extends StatefulWidget {
-  final List<_Key> _keys = [];  
+  final List<_Key> _keys = [];
   final void Function(String) onTap;
   final Color Function(String) setColor;
 
@@ -26,9 +26,10 @@ class _KeyboardState extends State<Keyboard> {
       child: AspectRatio(
         aspectRatio: 10 / 4,
         child: StaggeredGrid.count(
+          axisDirection: AxisDirection.down,
           crossAxisCount: 40,
-          mainAxisSpacing: 10,
-          crossAxisSpacing: 5,
+          mainAxisSpacing: 5,
+          crossAxisSpacing: 2,
           /*childAspectRatio: 8 / 10,
           physics: const NeverScrollableScrollPhysics(),*/
           children: widget._keys.map<StaggeredGridTile>((cell) {

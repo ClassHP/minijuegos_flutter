@@ -94,10 +94,7 @@ class _OteloState extends State<Otelo> {
           children: [
             _Score(logic: _logic, playerColors: _playerColors),
             Expanded(
-              child: _Board(
-                  logic: _logic,
-                  playerColors: _playerColors,
-                  setChip: _setChip),
+              child: _Board(logic: _logic, playerColors: _playerColors, setChip: _setChip),
             ),
             const SizedBox(height: 20),
             playButtons,
@@ -136,42 +133,34 @@ class _Board extends StatelessWidget {
             crossAxisSpacing: 2,
             childAspectRatio: 1,
             children: _logic.boxes.map<Widget>((box) {
-              var visible = box.player != null &&
-                      _logic.players[box.player ?? 0].type ==
-                          PlayerType.person ||
-                  box.selected;
-              return InkWell(
-                onTap: () {
-                  if (box.player != null &&
-                      _logic.players[box.player ?? 0].type ==
-                          PlayerType.person) {
-                    setChip(box);
-                  }
-                },
-                child: Stack(alignment: AlignmentDirectional.center, children: [
-                  Ink(
-                    decoration: const BoxDecoration(
-                      color: Colors.grey,
-                      borderRadius: BorderRadius.all(Radius.circular(2)),
-                    ),
-                  ),
-                  AnimatedFractionallySizedBox(
+              var visible =
+                  box.player != null && _logic.players[box.player ?? 0].type == PlayerType.person ||
+                      box.selected;
+              return Material(
+                color: Colors.grey,
+                borderRadius: const BorderRadius.all(Radius.circular(2)),
+                child: InkWell(
+                  onTap: () {
+                    if (box.player != null &&
+                        _logic.players[box.player ?? 0].type == PlayerType.person) {
+                      setChip(box);
+                    }
+                  },
+                  child: AnimatedFractionallySizedBox(
                     alignment: Alignment.center,
-                    duration: visible
-                        ? const Duration(seconds: 1)
-                        : const Duration(milliseconds: 100),
+                    duration:
+                        visible ? const Duration(seconds: 1) : const Duration(milliseconds: 100),
                     widthFactor: box.selected ? 0.9 : 0.5,
                     child: Container(
                       decoration: BoxDecoration(
                         color: box.selected
                             ? _playerColors[box.player ?? 0]
-                            : _playerColors[box.player ?? 0]
-                                .withOpacity(visible ? 0.5 : 0),
+                            : _playerColors[box.player ?? 0].withOpacity(visible ? 0.5 : 0),
                         shape: BoxShape.circle,
                       ),
                     ),
                   ),
-                ]),
+                ),
               );
             }).toList(),
           ),
@@ -198,8 +187,7 @@ class _Score extends StatelessWidget {
         super(key: key);
 
   Icon _getIconPlayer(Player player) {
-    var color =
-        player == _logic.players[0] ? _playerColors[1] : _playerColors[0];
+    var color = player == _logic.players[0] ? _playerColors[1] : _playerColors[0];
     if (player.type == PlayerType.ia) {
       return Icon(Icons.important_devices, color: color);
     }
@@ -227,10 +215,10 @@ class _Score extends StatelessWidget {
                   const SizedBox(width: 20),
                   Text(
                     "${player.score}",
-                    style: Theme.of(context).textTheme.headline5?.copyWith(
-                        color: player.player == 0
-                            ? _playerColors[1]
-                            : _playerColors[0]),
+                    style: Theme.of(context)
+                        .textTheme
+                        .headlineSmall
+                        ?.copyWith(color: player.player == 0 ? _playerColors[1] : _playerColors[0]),
                   ),
                 ],
               ),
@@ -259,9 +247,7 @@ class _ButtonPlay extends StatelessWidget {
     return FloatingActionButton.extended(
       heroTag: UniqueKey(),
       onPressed: onPressed,
-      backgroundColor: onPressed != null
-          ? Theme.of(context).colorScheme.primary
-          : Colors.grey,
+      backgroundColor: onPressed != null ? Theme.of(context).colorScheme.primary : Colors.grey,
       label: Row(
         children: [
           Icon(icon1),

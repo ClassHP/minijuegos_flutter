@@ -72,7 +72,7 @@ class _BuscaminasScoreState extends State<BuscaminasScore>
       body: TabBarView(
         controller: _tabController,
         children: [
-          for (final tab in tabs) 
+          for (final tab in tabs)
             StreamBuilder<QuerySnapshot>(
               stream: FirebaseFirestore.instance
                   .collection('buscaminas-score')
@@ -103,8 +103,7 @@ class _BuscaminasScoreState extends State<BuscaminasScore>
                         child: CircleAvatar(child: Text('${index + 1}')),
                       ),
                       title: Text('${docs[index]['name']}'),
-                      subtitle:
-                          Text(formatter.format(docs[index]['date'].toDate())),
+                      subtitle: Text(formatter.format(docs[index]['date'].toDate())),
                       trailing: FittedBox(
                         fit: BoxFit.fill,
                         child: Row(
@@ -112,7 +111,7 @@ class _BuscaminasScoreState extends State<BuscaminasScore>
                             const Icon(Icons.access_time),
                             Text(
                               _strTime(docs[index]['seconds']),
-                              style: Theme.of(context).textTheme.headline5,
+                              style: Theme.of(context).textTheme.headlineSmall,
                             ),
                           ],
                         ),

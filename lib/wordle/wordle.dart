@@ -20,7 +20,7 @@ class _WordleState extends State<Wordle> {
   DateTime _dateSelected = DateTime.now();
   String _nextAt = '';
   DateTime _today = DateTime.now();
-  late Timer _timer;
+  Timer? _timer;
 
   _WordleState() {
     _timer = Timer.periodic(const Duration(milliseconds: 1000), _timerCallback);
@@ -108,7 +108,7 @@ class _WordleState extends State<Wordle> {
   @override
   void dispose() {
     super.dispose();
-    _timer.cancel();
+    _timer?.cancel();
   }
 
   @override
@@ -156,8 +156,7 @@ class _WordleState extends State<Wordle> {
               ),
             ),
             const SizedBox(height: 10),
-            if (!_logic.isEnd) Keyboard(_onTap, _setColor),
-            if (_logic.isEnd) endWidget,
+            (!_logic.isEnd) ? Keyboard(_onTap, _setColor) : endWidget,
           ],
         ),
       ),
@@ -229,7 +228,9 @@ class _Block extends StatelessWidget {
       child: _cell.letter != ''
           ? FittedText(
               _cell.letter,
-              color: _cell.color != 0 ? Colors.white : Theme.of(context).textTheme.headline5!.color,
+              color: _cell.color != 0
+                  ? Colors.white
+                  : Theme.of(context).textTheme.headlineSmall!.color,
               fontWeight: FontWeight.bold,
             )
           : null,

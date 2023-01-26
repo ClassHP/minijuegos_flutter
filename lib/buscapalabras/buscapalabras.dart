@@ -217,16 +217,16 @@ class _Block extends StatelessWidget {
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.5),
-            spreadRadius: 3,
-            blurRadius: 4,
+            spreadRadius: 0.5,
+            blurRadius: 2,
           ),
         ],
       ),
       child: Material(
         color: Colors.blueGrey,
         borderRadius: const BorderRadius.all(Radius.circular(5)),
-        elevation: 10,
-        shadowColor: Colors.black,
+        elevation: 5,
+        //shadowColor: Colors.black,
         child: InkWell(
           onTap: _onTapBlock != null ? () => _onTapBlock!(_block) : null,
           splashColor: Colors.greenAccent,
@@ -238,7 +238,7 @@ class _Block extends StatelessWidget {
                 padding: const EdgeInsets.all(4),
                 child: FittedText(
                   _block.letter,
-                  color: Theme.of(context).textTheme.headline5!.color,
+                  color: Colors.white,
                   fontWeight: FontWeight.bold,
                 ),
               ),

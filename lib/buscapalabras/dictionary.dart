@@ -5,7 +5,7 @@ class Dictionary {
   late Future<void> _ready;
   Future<void> get ready => _ready;
   static final Map<String, Set<String>> _mapDic = {};
-  int _wordCount = 0;
+  //int _wordCount = 0;
 
   Dictionary() {
     _ready = _loadFileWords();
@@ -36,7 +36,7 @@ class Dictionary {
         _mapDic[word[0]] = {};
       }
       _mapDic[word[0]]!.add(word);
-      _wordCount++;
+      //_wordCount++;
     }
   }
 

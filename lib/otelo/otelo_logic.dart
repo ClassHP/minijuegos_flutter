@@ -6,7 +6,7 @@ class OteloLogic {
   final List<Box> _boxes = [];
   final _GameType _type = _GameType.otelo;
   final List<Player> _players = [Player(player: 0), Player(player: 1)];
-  late Player _turn;
+  Player? _turn;
   bool _end = true;
   final OteloStore _store = OteloStore();
   Stream<OteloRoom?>? _room;
@@ -35,41 +35,41 @@ class OteloLogic {
     for (var box in _boxes) {
       box.player = null;
       box.selected = false;
-      if (_type == _GameType.otelo &&
-          (box.x == 3 || box.x == 4) &&
-          (box.y == 3 || box.y == 4)) {
+      if (_type == _GameType.otelo && (box.x == 3 || box.x == 4) && (box.y == 3 || box.y == 4)) {
         box.player = box.x == box.y ? 1 : 0;
         box.selected = true;
       }
     }
-    if(type != PlayerType.online) {
+    if (type != PlayerType.online) {
       _setTurn(turn);
     } else {
       _loading = true;
       _room = await _store.joinRoom(_boxes);
-      if(_room == null) {
+      if (_room == null) {
         stop();
       } else {
-        _room?.listen((room) { 
-          if(room == null) {
+        _room?.listen((room) {
+          if (room == null) {
             stop();
           } else {
             _loading = room.status == 0;
             _players[0].score = 0;
             _players[1].score = 0;
-            _players[0].type = room.player1 == _store.playerId ? PlayerType.person : PlayerType.online;
-            _players[1].type = room.player2 == _store.playerId ? PlayerType.person : PlayerType.online;
-            for(int i = 0; i < _boxes.length; i++) {
-              if(room.boxes[i] == -1) {
+            _players[0].type =
+                room.player1 == _store.playerId ? PlayerType.person : PlayerType.online;
+            _players[1].type =
+                room.player2 == _store.playerId ? PlayerType.person : PlayerType.online;
+            for (int i = 0; i < _boxes.length; i++) {
+              if (room.boxes[i] == -1) {
                 _boxes[i].selected = false;
                 _boxes[i].player = null;
               } else {
                 _boxes[i].selected = true;
                 _boxes[i].player = room.boxes[i];
-                _players[room.boxes[i]].score ++;
+                _players[room.boxes[i]].score++;
               }
             }
-            if(room.status == 2) {
+            if (room.status == 2) {
               stop();
             } else {
               _setTurn(room.turn);
@@ -88,7 +88,7 @@ class OteloLogic {
       var items = _getItemsFlip(box);
       for (var item in items) {
         _players[item?.player ?? 0].score--;
-        item?.player = _turn.player;
+        item?.player = _turn?.player;
         _players[item?.player ?? 0].score++;
       }
       if (!_setTurn(_turn == _players[0] ? 1 : 0)) {
@@ -102,11 +102,9 @@ class OteloLogic {
   void stop() {
     _end = true;
     _loading = false;
-    if(_room != null) {
+    if (_room != null) {
       _room = null;
-      _store.endRoom().then((_) => {
-          _updateLayout.add(null)       
-      });
+      _store.endRoom().then((_) => {_updateLayout.add(null)});
     }
   }
 
@@ -142,11 +140,11 @@ class OteloLogic {
         _end = false;
         box.player = null;
         if ((box.x == 3 || box.x == 4) && (box.y == 3 || box.y == 4)) {
-          box.player = _turn.player;
+          box.player = _turn?.player;
           pass = false;
         }
         if (_getItemsFlip(box).isNotEmpty) {
-          box.player = _turn.player;
+          box.player = _turn?.player;
           pass = false;
         }
       }
@@ -160,12 +158,12 @@ class OteloLogic {
       for (int ly = -1; ly < 2; ly++) {
         if (lx != 0 || ly != 0) {
           var lbox = _boxIndex(box.x + lx, box.y + ly);
-          if (lbox?.selected == true && lbox?.player != _turn.player) {
+          if (lbox?.selected == true && lbox?.player != _turn?.player) {
             List<Box?> items = [lbox];
             for (int li = 1; li < 8; li++) {
               lbox = _boxIndex(box.x + lx * li, box.y + ly * li);
               if (lbox?.selected == true) {
-                if (lbox?.player == _turn.player) {
+                if (lbox?.player == _turn?.player) {
                   itemsFlip.addAll(items);
                   break;
                 } else {
@@ -197,24 +195,16 @@ class OteloLogic {
   }
 
   Future<void> _playIa() async {
-    if (_turn.type == PlayerType.ia) {
-      var boxes =
-          _boxes.where((box) => !box.selected && box.player != null).toList();
+    if (_turn?.type == PlayerType.ia) {
+      var boxes = _boxes.where((box) => !box.selected && box.player != null).toList();
       boxes.sort((a, b) => _getPriority(b) - _getPriority(a));
       var first = boxes.first;
-      boxes = boxes
-          .where((box) => _getPriority(box) == _getPriority(first))
-          .toList();
+      boxes = boxes.where((box) => _getPriority(box) == _getPriority(first)).toList();
       if (boxes.length > 1) {
-        List<MapEntry<Box, int>> max = boxes
-            .map<MapEntry<Box, int>>(
-                (e) => MapEntry(e, _getItemsFlip(e).length))
-            .toList();
+        List<MapEntry<Box, int>> max =
+            boxes.map<MapEntry<Box, int>>((e) => MapEntry(e, _getItemsFlip(e).length)).toList();
         max.sort((a, b) => b.value - a.value);
-        boxes = max
-            .where((box) => box.value == max.first.value)
-            .map((e) => e.key)
-            .toList();
+        boxes = max.where((box) => box.value == max.first.value).map((e) => e.key).toList();
       }
       var box = boxes[Random().nextInt(boxes.length)];
       await Future.delayed(const Duration(milliseconds: 500));
@@ -224,8 +214,8 @@ class OteloLogic {
   }
 
   Future<void> _playOnline() async {
-    if (_turn.type == PlayerType.online || _end) {
-      await _store.updateRoom(_boxes, _end, _turn.player);
+    if (_turn?.type == PlayerType.online || _end) {
+      await _store.updateRoom(_boxes, _end, _turn!.player);
     }
   }
 }
@@ -250,6 +240,3 @@ class Player {
 
   Player({required this.player});
 }
-
-
-

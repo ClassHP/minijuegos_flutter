@@ -11,7 +11,7 @@ class G2048ScoreWidget extends StatefulWidget {
 
 class _G2048ScoreWidgetState extends State<G2048ScoreWidget> {
   final DateFormat formatter = DateFormat('yyyy-MM-dd HH:mm');
-  
+
   String _strTime(int seconds) =>
       '${'${seconds ~/ 60}'.padLeft(2, '0')}:${'${seconds - (seconds ~/ 60) * 60}'.padLeft(2, '0')}';
 
@@ -53,7 +53,7 @@ class _G2048ScoreWidgetState extends State<G2048ScoreWidget> {
                 subtitle: Text(formatter.format(docs[index]['date'].toDate())),
                 trailing: Text(
                   '${docs[index]['score']} / ${_strTime(docs[index]['seconds'])}',
-                  style: Theme.of(context).textTheme.headline5,
+                  style: Theme.of(context).textTheme.headlineSmall,
                 ),
               );
             },
